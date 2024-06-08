@@ -1,1 +1,1 @@
-# Repositório voltado para os estudos e projetos criados na Digital Innovation One.
+# Repositório voltado para projetos desenvolvidos em cursos.
