@@ -85,7 +85,12 @@ def cadastrar_usuario(usuarios):
     logradouro = input("\nInforme o nome da rua/avenida/travessa: ")
     
     while not re.match(pattern, telefone):
-        telefone = input("\nInforme seu número de telefone, com o seguinte formato: (XX) XXXXX-XXXX\n")
+        validate = input("\nInforme seu número de telefone, com o seguinte formato: (XX) XXXXX-XXXX\n")
+        if re.match(pattern, validate):
+            telefone = validate
+        else:
+            print("\nPor favor, digite um número válido.")
+            
 
     complemento = input("\nInforme o complemento (ex: Casa/Apartamento): ")
     bairro = input("\nInforme o bairro: ")
@@ -100,7 +105,6 @@ def cadastrar_usuario(usuarios):
           Usuário cadastrado com sucesso!
           ==============  ===============
           """)
-    print(usuarios)
 
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] ==cpf]
