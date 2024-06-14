@@ -39,3 +39,6 @@ Desenvolver um sistema bancário com funções de saque, depósito e extrato em 
 - O Número da conta é sequencial, iniciando em 1;
 - O número da agência é fixo: 0001;
 - O usuário pode ter mais de uma conta, mas uma conta pertence a somente um usuário;
+
+### Funcionalidades adicionais implementadas:
+- Validação de telefone;
