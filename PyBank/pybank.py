@@ -1,4 +1,5 @@
 import textwrap
+import re
 
 def menu():
     menu = """\n
@@ -67,7 +68,8 @@ def exibir_extrato(saldo, /, *, extrato):
 def cadastrar_usuario(usuarios):
     cpf = input("\nInforme seu CPF (Apenas números): ")
     usuario = filtrar_usuario(cpf, usuarios)
-
+    pattern = r"^\([0-9]{2}\) [9][0-9]{4}\-[0-9]{4}$"
+    telefone = ""
     if usuario:
         print("\n Já existe um usuário cadastrado com este CPF!")
         return
@@ -81,13 +83,16 @@ def cadastrar_usuario(usuarios):
           \n""")
     cep = input("\nInforme seu CEP: ")
     logradouro = input("\nInforme o nome da rua/avenida/travessa: ")
-    numero = input("\nInforme o número: ")
+    
+    while not re.match(pattern, telefone):
+        telefone = input("\nInforme seu número de telefone, com o seguinte formato: (XX) XXXXX-XXXX\n")
+
     complemento = input("\nInforme o complemento (ex: Casa/Apartamento): ")
     bairro = input("\nInforme o bairro: ")
     cidade = input("\nInforme a cidade: ")
     estado = input("\nInforme o estado: ")
 
-    usuarios.append({"nome": nome, "cpf": cpf, "data_nascimento": data_nascimento, "cep": cep, "logradouro": logradouro, "numero": numero, 
+    usuarios.append({"nome": nome, "cpf": cpf, "data_nascimento": data_nascimento, "cep": cep, "logradouro": logradouro, "telefone": telefone, 
                      "complemento": complemento, "bairro": bairro, "cidade": cidade, "estado": estado})
 
     print("""\n
@@ -95,6 +100,7 @@ def cadastrar_usuario(usuarios):
           Usuário cadastrado com sucesso!
           ==============  ===============
           """)
+    print(usuarios)
 
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] ==cpf]
