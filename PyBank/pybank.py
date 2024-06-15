@@ -65,11 +65,21 @@ def exibir_extrato(saldo, /, *, extrato):
     print(f"Saldo\tR$ {saldo:.2f}")
     print("=================================")
 
+def validate(numero, pattern):
+    
+    while not re.match(pattern, numero):
+        numero = input("\nInforme seu número de telefone, com o seguinte formato: (XX) XXXXX-XXXX\n")
+        if re.match(pattern, numero):
+            return numero
+        else:
+            print("\nPor favor, digite um número válido.")
+
 def cadastrar_usuario(usuarios):
     cpf = input("\nInforme seu CPF (Apenas números): ")
     usuario = filtrar_usuario(cpf, usuarios)
+    numero = ""
     pattern = r"^\([0-9]{2}\) [9][0-9]{4}\-[0-9]{4}$"
-    telefone = ""
+
     if usuario:
         print("\n Já existe um usuário cadastrado com este CPF!")
         return
@@ -83,15 +93,7 @@ def cadastrar_usuario(usuarios):
           \n""")
     cep = input("\nInforme seu CEP: ")
     logradouro = input("\nInforme o nome da rua/avenida/travessa: ")
-    
-    while not re.match(pattern, telefone):
-        validate = input("\nInforme seu número de telefone, com o seguinte formato: (XX) XXXXX-XXXX\n")
-        if re.match(pattern, validate):
-            telefone = validate
-        else:
-            print("\nPor favor, digite um número válido.")
-            
-
+    telefone = validate(numero, pattern)
     complemento = input("\nInforme o complemento (ex: Casa/Apartamento): ")
     bairro = input("\nInforme o bairro: ")
     cidade = input("\nInforme a cidade: ")
@@ -105,6 +107,8 @@ def cadastrar_usuario(usuarios):
           Usuário cadastrado com sucesso!
           ==============  ===============
           """)
+
+    print(usuarios)
 
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] ==cpf]
