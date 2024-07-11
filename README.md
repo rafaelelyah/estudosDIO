@@ -1,7 +1,7 @@
 # Repositório de Estudos
 Repositório criado para armazenar projetos realizados durante cursos.
 
-## Projetos adicionados até o momento:
+## Projetos:
 
 ### PyBank
 
