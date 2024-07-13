@@ -1,0 +1,7 @@
+[2024-07-13 04:14:21] Função 'criar_cliente' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None
+[2024-07-13 04:14:28] Função 'criar_conta' executada com argumentos (1, [<PessoaFisica: ('fdas', '317')>], [<ContaCorrente: ('0001', '1', 'fdas')>]) e {}. Retornou None
+[2024-07-13 04:14:36] Função 'depositar' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None
+[2024-07-13 04:14:44] Função 'depositar' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None
+[2024-07-13 04:14:53] Função 'exibir_extrato' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None
+[2024-07-13 04:15:02] Função 'sacar' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None
+[2024-07-13 04:15:07] Função 'exibir_extrato' executada com argumentos ([<PessoaFisica: ('fdas', '317')>],) e {}. Retornou None

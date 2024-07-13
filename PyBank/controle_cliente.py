@@ -2,6 +2,32 @@ import textwrap
 from abc import ABC, abstractclassmethod, abstractproperty
 from datetime import datetime
 import re
+from pathlib import Path
+
+ROOT_PATH = Path(__file__).parent
+
+
+class ContasIterador:
+    def __init__(self, contas):
+        self.contas = contas
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            conta = self.contas[self._index]
+            return f"""\
+            Agência:\t{conta.agencia}
+            Número:\t\t{conta.numero}
+            Titular:\t{conta.cliente.nome}
+            Saldo:\t\tR$ {conta.saldo:.2f}
+        """
+        except IndexError:
+            raise StopIteration
+        finally:
+            self._index += 1
 
 
 class Cliente:
@@ -11,10 +37,10 @@ class Cliente:
         self.indice_conta = 0
 
     def realizar_transacao(self, conta, transacao):
-        if len(conta.historico.transacoes_do_dia()) >= 10:
+        if len(conta.historico.transacoes_do_dia()) >= 5:
             print("\nVocê excedeu o limite de transações permitidas para hoje.")
             return
-        
+
         transacao.registrar(conta)
 
     def adicionar_conta(self, conta):
@@ -35,6 +61,9 @@ class PessoaFisica(Cliente):
         self.bairro = bairro
         self.cidade = cidade
         self.estado = estado
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}: ('{self.nome}', '{self.cpf}')>"
 
 
 class Conta:
@@ -103,6 +132,10 @@ class ContaCorrente(Conta):
         self._limite = limite
         self._limite_saques = limite_saques
 
+    @classmethod
+    def nova_cona(cls, cliente, numero, limite, limite_saques):
+        return cls(numero, cliente, limite, limite_saques)
+
     def sacar(self, valor):
         numero_saques = len(
             [transacao for transacao in self.historico.transacoes
@@ -122,6 +155,9 @@ class ContaCorrente(Conta):
             return super().sacar(valor)
 
         return False
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: ('{self.agencia}', '{self.numero}', '{self.cliente.nome}')>"
 
     def __str__(self):
         return f"""\
@@ -145,7 +181,7 @@ class Historico:
             {
                 "tipo": transacao.__class__.__name__,
                 "valor": transacao.valor,
-                "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s"),
+                "data": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
             }
         )
 
@@ -205,6 +241,20 @@ class Deposito(Transacao):
             conta.historico.adicionar_transacao(self)
 
 
+def log_transacao(func):
+    def envelope(*args, **kwargs):
+        resultado = func(*args, **kwargs)
+        data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open(ROOT_PATH / "log.txt", "a") as arquivo:
+            arquivo.write(
+                f"[{data_hora}] Função '{func.__name__}' executada com argumentos {args} e {kwargs}. "
+                f"Retornou {resultado}\n"
+            )
+        return resultado
+
+    return envelope
+
+
 def menu():
     menu = """\n
     ======= Bem Vindo(a) ao PyBank ========
@@ -227,6 +277,7 @@ def filtrar_cliente(cpf, clientes):
     return clientes_filtrados[0] if clientes_filtrados else None
 
 
+@log_transacao
 def depositar(clientes):
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -254,6 +305,7 @@ def recuperar_conta_cliente(cliente):
     return cliente.contas[0]
 
 
+@log_transacao
 def sacar(clientes):
     cpf = input("\nInforme o CPF do cliente: ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -272,6 +324,7 @@ def sacar(clientes):
     cliente.realizar_transacao(conta, transacao)
 
 
+@log_transacao
 def exibir_extrato(clientes):
     cpf = input("\nInforme o CPF do cliente: ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -308,7 +361,7 @@ def validate(numero, pattern):
         else:
             print("\nPor favor, digite um número válido.")
 
-
+@log_transacao
 def criar_cliente(clientes):
     cpf = input("\nInforme seu CPF (Apenas números): ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -321,11 +374,12 @@ def criar_cliente(clientes):
 
     nome = input("\nInforme seu nome completo: ")
     data_nascimento = input("\nInforme sua data de nascimento (dd/mm/aaaa): ")
-    print("""\n
-          =======================================
-          Agora, informe os dados do seu endereço:
-          =======================================
-          \n""")
+    print(
+        """\n
+        =======================================
+        Agora, informe os dados do seu endereço:
+        =======================================
+        \n""")
     cep = input("\nInforme seu CEP: ")
     logradouro = input("\nInforme o nome da rua/avenida/travessa: ")
     telefone = validate(numero, pattern)
@@ -334,30 +388,29 @@ def criar_cliente(clientes):
     cidade = input("\nInforme a cidade: ")
     estado = input("\nInforme o estado: ")
 
-    cliente = PessoaFisica(nome=nome, cpf=cpf,
-                           data_nascimento=data_nascimento,
-                           cep=cep, logradouro=logradouro,
-                           telefone=telefone,
-                           complemento=complemento, bairro=bairro,
-                           cidade=cidade, estado=estado)
+    cliente = PessoaFisica(nome=nome, cpf=cpf, data_nascimento=data_nascimento, cep=cep,
+                        logradouro=logradouro, telefone=telefone,
+                        complemento=complemento, bairro=bairro, cidade=cidade,
+                        estado=estado)
 
     clientes.append(cliente)
 
-    print("""\n
-          ==============  ===============
-          Cliente cadastrado com sucesso!
-          ==============  ===============
-          """)
+    print(
+        """\n
+        ==============  ===============
+        Cliente cadastrado com sucesso!
+        ==============  ===============
+        """)
 
     print(clientes)
 
 
 def filtrar_usuario(cpf, usuarios):
-    usuarios_filtrados = [usuario for usuario in usuarios if
-                          usuario["cpf"] == cpf]
+    usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
 
 
+@log_transacao
 def criar_conta(numero_conta, clientes, contas):
     cpf = input("\nInforme seu CPF (apenas números): ")
     cliente = filtrar_cliente(cpf, clientes)

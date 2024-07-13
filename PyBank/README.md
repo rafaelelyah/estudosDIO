@@ -43,5 +43,17 @@ Desenvolver um sistema bancário com funções de saque, depósito e extrato em 
 ### Terceira parte:
 - Adicionar funcionalidades no sistema: Decorador de log, gerador de relatórios e iterador personalizado.
 
+### Última parte:
+- Alterar decorador de log para adicionar as informações em um arquivo;
+- O decorador deve registrar:
+1 - Data e hora atuais;
+2 - Nome da função;
+3 - Argumentos da função;
+4 - Valor retornado pela função;
+5 - O arquivo de log deve ser chamado log.txt;
+6 - Se o arquivo log.txt existir, novos logs devem seradicionados ao arquivo;
+7 - Cada entrada de log deve estar em uma nova linha.
+
+
 ### Funcionalidades adicionais implementadas:
 - Validação de telefone;
