@@ -40,5 +40,8 @@ Desenvolver um sistema bancário com funções de saque, depósito e extrato em 
 - O número da agência é fixo: 0001;
 - O usuário pode ter mais de uma conta, mas uma conta pertence a somente um usuário;
 
+### Terceira parte:
+- Adicionar funcionalidades no sistema: Decorador de log, gerador de relatórios e iterador personalizado.
+
 ### Funcionalidades adicionais implementadas:
 - Validação de telefone;
